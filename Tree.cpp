@@ -49,10 +49,29 @@ private:
 		}
 		return to_remove;
 	}
+	Node* copyHelper(const Node* other){
+		if (other == nullptr){
+			return nullptr;
+		}
+		Node *newNode = new Node(other->data,nullptr,nullptr);
+		newNode->left = copyHelper(other->left);
+		newNode->right = copyHelper(other->right);
+		return newNode;
+	}
 public:
 	Tree() :root(nullptr), size(0){};
-	Tree(const Tree&) = delete; //to-do later
-	Tree& operator = (const Tree&) = delete; //to-do later
+	Tree(const Tree& other){
+		root = copyHelper(other.root);
+	}
+	//Tree& operator = (const Tree&) = delete; //to-do later
+	Tree& operator = (const Tree& other){
+		if (this != &other){
+			size = 0;
+			freeNode(root);
+			Node* root = copyHelper(other.root);
+		}
+		return *this;
+	}
 	void insert(int x, position_t position){
 		Node **to_insert = navigate(position);
 		if (to_insert != nullptr) {
@@ -112,6 +131,21 @@ int main(){
 	t.insert(3, "r");
 	t.insert(5, "ll");
 	cout << t;
+	Tree p(t);
+	cout << endl;
+	cout << p;
+
+	p.insert(6, "lll");
+
+
+	cout << endl;
+	cout << p;
+	//t = p;
+
+	cout << endl;
+	cout << t;
+	cout << endl;
+	cout << p;
 	system("pause");
 	return 0;
 }
