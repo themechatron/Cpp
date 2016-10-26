@@ -6,7 +6,7 @@ using namespace std;
 struct Node{
 	int data;
 	Node* left, *right;
-	Node(int d, Node *l=nullptr, Node *r=nullptr) :data(d), left(l), right(r){};
+	Node(int d, Node *l = nullptr, Node *r = nullptr) :data(d), left(l), right(r){};
 };
 class Tree{
 private:
@@ -31,12 +31,12 @@ private:
 		return true;
 	}
 	/*Node* navigate(position_t position){
-		Node* ptr = root;
-		for (size_t i = 0; i < position.size(); i++){
-			if (position[i] == 'l') ptr = ptr->left;
-			else if (position[i] == 'r') ptr = ptr->right;
-		}
-		return ptr;
+	Node* ptr = root;
+	for (size_t i = 0; i < position.size(); i++){
+	if (position[i] == 'l') ptr = ptr->left;
+	else if (position[i] == 'r') ptr = ptr->right;
+	}
+	return ptr;
 	}*/
 	Node** navigate(position_t position){
 		if (!isValidPath(position)){
@@ -53,7 +53,7 @@ private:
 		if (other == nullptr){
 			return nullptr;
 		}
-		Node *newNode = new Node(other->data,nullptr,nullptr);
+		Node *newNode = new Node(other->data, nullptr, nullptr);
 		newNode->left = copyHelper(other->left);
 		newNode->right = copyHelper(other->right);
 		return newNode;
@@ -61,12 +61,13 @@ private:
 public:
 	Tree() :root(nullptr), size(0){};
 	Tree(const Tree& other){
+		size = other.size;
 		root = copyHelper(other.root);
 	}
 	//Tree& operator = (const Tree&) = delete; //to-do later
 	Tree& operator = (const Tree& other){
 		if (this != &other){
-			size = 0;
+			size = other.size;
 			freeNode(root);
 			Node* root = copyHelper(other.root);
 		}
@@ -117,6 +118,7 @@ public:
 	}
 	friend ostream& operator<<(ostream& os, const Tree& t){
 		printNode(os, t.root);
+		std::cout << std::endl;
 		return os;
 	}
 	~Tree(){
@@ -132,26 +134,29 @@ int main(){
 	t.insert(5, "ll");
 	cout << t;
 	Tree p(t);
-	cout << endl;
 	cout << p;
 
-	p.insert(6, "lll");
+	p.insert(6, "lr");
+	p.insert(7, "lll");
 
-
-	cout << endl;
 	cout << p;
-	//t = p;
+	t = p;
 
-	cout << endl;
 	cout << t;
-	cout << endl;
+	cout << p;
+
+	Tree x = t;
+	cout << p;
+
+	p = p;
+
 	cout << p;
 	system("pause");
 	return 0;
 }
 /*
 void specialInsert(int x){
-	insert(x,calculatePosition);
+insert(x,calculatePosition);
 }
 
 */
