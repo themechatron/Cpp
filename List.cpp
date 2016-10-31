@@ -66,6 +66,5 @@ int main(){
 	zaki.printFoward();
 	zaki.printFoward();
 	std::cout << zaki.size();
-	system("pause");
 	return 0;
 }

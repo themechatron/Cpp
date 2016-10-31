@@ -151,7 +151,6 @@ int main(){
 	p = p;
 
 	cout << p;
-	system("pause");
 	return 0;
 }
 /*

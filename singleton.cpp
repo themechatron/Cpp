@@ -53,6 +53,5 @@ int main(){
 
 	//Singleton
 	std::cout << Singleton::getA() << " " << std::endl;
-	system("pause");
 	return 0;
 }

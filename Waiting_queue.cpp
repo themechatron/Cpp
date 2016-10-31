@@ -122,6 +122,5 @@ int main(){
 	cout << "Ticket idle time: " << tickets.getIdleTime() << endl;
 	cout << "Popcorn idle time: " << popcorn.getIdleTime() << endl;
 	cout << "Glasses idle time: " << glasses.getIdleTime() << endl;
-	system("pause");
 	return 0;
 }

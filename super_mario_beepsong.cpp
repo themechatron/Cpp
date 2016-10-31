@@ -138,6 +138,5 @@ int main(){
         Beep (1046,675);
       
 	cin.get(); // wait 
-	system("pause");
 	return 0;
 }

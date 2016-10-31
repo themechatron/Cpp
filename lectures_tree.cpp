@@ -297,6 +297,5 @@ int main()
 	cout << t.numberLeaves() << endl;
 	cout << t.maxLeaf() << endl;
 	cout << t.not_leaf() << endl;
-	system("pause");
 	return 0;
 }

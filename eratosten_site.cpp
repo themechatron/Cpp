@@ -24,6 +24,5 @@ int main()
 			std::cout << i << " ";
 		}
 	}
-	system("pause");
 	return 0;
 }
