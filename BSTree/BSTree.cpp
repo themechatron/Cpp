@@ -158,6 +158,3 @@ std::vector<T> BTree<T>::postorderTraversal() const{
 	inorder(root, result);
 	return result;
 }
-int main(){
-	return 0;
-}
