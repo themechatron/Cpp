@@ -22,6 +22,8 @@ private:
 	void preorder(Node<T>*, std::vector<T>&) const;
 	void inorder(Node<T>*, std::vector<T>&) const;
 	void postorder(Node<T>*, std::vector<T>&) const;
+	int getHeight(Node<T>*);
+	static Node<T>* reconstructNodes(const std::vector<T>&, const std::vector<T>&);
 public:
 	BTree<T>();
 	BTree<T>(const BTree<T>&); //copy constructor
@@ -32,5 +34,7 @@ public:
 	std::vector<T> preorderTraversal() const;
 	std::vector<T> inorderTraversal() const;
 	std::vector<T> postorderTraversal() const;
+	static BTree<T>* reconstruct(const std::vector<T>&, const std::vector<T>&);
+	int getHeight() const;
 	~BTree<T>(); //destructor
 };
