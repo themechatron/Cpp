@@ -42,12 +42,26 @@ Void types: void
 Null pointer: NULL, nullptr(c++11)
 
 Declaring constants: 
-	const
-	constexpr(c++11)
+	const:
+		Defines that the type is constant. The constant objects are non-mutable and cannot be modified. Attempt to do directly gives compile-time error, and to do so indirectly gives "modifying the const object through a reference or pointer to non-const type".
+	constexpr(since c++11, supported by Visual Studio 2015):
+		Can be used for variables and functions. The value of constexpr variable or function is known on compile time.
+	
+	constexpr functions:
+		it must not be virtual.
+		it's return type must be LiteralType.
+		each of it's parameters must be LiteralType.
+
+	constexpr variables:
+		it's type must be LiteralType.	
+		it must be immediately constructed or assigned a value.
+		the constructor parameters or the value to be assigned must contain only literal values, constexpr variables and functions.
+		the constructor used to construct the object (either implicit or explicit) must satisfy the requirements of constexpr constructor. In the case of explicit constructor, it must have constexpr specified.
+	
 	std::initializer_list<TYPE>(since c++11) // Creates a list of constant values
 		Iterating through initializer_list:
 			for(auto idx = initializer_list.begin();idx!=initializer_list.end();++idx) { std::cout << *idx << std::endl; } 
-	enum class	
+	enum class (Cannot be iterated)
 
 Declaring functions:
 	RETURN_TYPE FUNCTION_NAME(PARAMETERS)
