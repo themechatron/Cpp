@@ -108,5 +108,16 @@ Declaring lambda expressions:
 					return 0;
 				}
 
+Exceptions:(std::exception):
+	Provides consistent interface to handle errors through the throw expression.
+	Include <exceptio> to use it [#include <exception>]
 
+	Exception types:
+		Logic error:
+			// TODO 
+		Runtime error:
+			// TODO	
+		
+
+	
 for(std::vector<T>::iterator it = vector.begin;it!=vector.end();++it){ cout<< *it;}
