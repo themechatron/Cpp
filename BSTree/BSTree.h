@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <algorithm>
+#include <fstream>
+
 template <typename T>
 struct Node {
 	T data;
@@ -16,6 +19,7 @@ template <typename T>
 class BSTree
 {
 	Node<T>* root;
+	size_t size;
 
 public:
 	BSTree();
@@ -33,7 +37,7 @@ public:
 	int getHeight(Node<T>*) const; //gets the height
 	Node<T>* copy(Node<T>*); //copy constructor helper
 	std::vector<T> listLeaves();
-	void serealize() const; //current prints in console, not in file
+	void serealize(std::string); // works with files
 	BSTree<T>* deserealize(std::string); // currently reading from the console, not from file
 	T& operator[](int idx);
 protected:
@@ -48,12 +52,13 @@ private:
 	int getHeight() const;
 	void get_leaves(std::vector<T>&, Node<T>*);
 	bool is_leaf(Node<T>*) const;
-	void serealize(Node<T>*) const;
-	T& find_element_by_index(int, int, Node<T>*);
+	void serealize(Node<T>*, std::ofstream&);
+	void deserealize(Node<T>*, std::ofstream&);
+	void find_element_by_index(T&, int, int, Node<T>*);
 };
 
 template <typename T>
-BSTree<T>::BSTree() :root(nullptr) {}
+BSTree<T>::BSTree() :root(nullptr), size(0) {}
 
 template<class T>
 Node<T>* BSTree<T>::copy(Node<T>* other){
@@ -69,12 +74,14 @@ Node<T>* BSTree<T>::copy(Node<T>* other){
 template <typename T>
 BSTree<T>::BSTree(const BSTree<T>& other) {
 	root = copy(other.root);
+	size = other.size;
 }
 
 template <typename T>
 BSTree<T>& BSTree<T>::operator=(const BSTree<T>& other) {
 	if (this != &other){
 		delete_tree(root);
+		size = other.size;
 		Node *root = copy(other.root);
 	}
 	return *this;
@@ -117,6 +124,7 @@ void BSTree<T>::add(const T& el) {
 	if (existing == nullptr) {
 		existing = new Node<T>(el);
 	}
+	size++;
 }
 
 template <typename T>
@@ -144,6 +152,7 @@ void BSTree<T>::remove(const T& el) {
 	existing = replacement;
 	// this deletes the old pointer
 	delete toDelete;
+	size--;
 }
 
 template <typename T>
@@ -288,56 +297,64 @@ void BSTree<T>::get_leaves(std::vector<T>& vec, Node<T>* node){
 }
 
 template<class T>
-void BSTree<T>::serealize(Node<T>* node) const{
+void BSTree<T>::serealize(Node<T>* node, std::ofstream& file) {
+
 	if (node == nullptr){
-		cout << "() ";
+		file << "() ";
 		return;
 	}
-	cout << "(" << node->data << " ";
-	serealize(node->right);
-	serealize(node->left);
-	cout << ")";
+	file << "(" << node->data << " ";
+	serealize(node->right, file);
+	serealize(node->left, file);
+	file << ")";
 }
 template<class T>
-void BSTree<T>::serealize() const{
-	serealize(root);
+void BSTree<T>::serealize(std::string filename){
+	std::ofstream file(filename.c_str());
+	serealize(root, file);
 }
 
 template<class T>
-BSTree<T>* BSTree<T>::deserealize(std::string path){
-	// TODO IMPLEMENTATION
+BSTree<T>* BSTree<T>::deserealize(std::string filename){
+	// TODO IMPLEMENT
+	return new BSTree<T>;
+}
+
+template<class T>
+void BSTree<T>::deserealize(Node<T>* node, std::ofstream& file){
+
 }
 
 template<class T>
 T& BSTree<T>::operator[](int idx){
-	T& result = find_element_by_index(idx, 0, root);
+	if (idx > size){
+		return root->data;
+	}
+	T result;
+	find_element_by_index(result, idx, 0, root);
 	return result;
 }
 
 template<class T>
-T& BSTree<T>::find_element_by_index(int index, int start, Node<T>* node){
+void BSTree<T>::find_element_by_index(T& element, int index, int start, Node<T>* node){
 	if (index == start){
-		return node->data;
-	}
-	if (node == nullptr){
+		element = node->data;
 		return;
 	}
-	if (start % 2 == 0){
-		if (node->left != nullptr){
-			find_element_by_index(index, start + 1, node->left);
-		}
-		else{
-			find_element_by_index(index, start + 1, node->right);
-		}
+	if ((node->left == nullptr && node->right == nullptr) || node == nullptr){
+		return;
 	}
-	else{
-		if (node->right != nullptr){
-			find_element_by_index(index, start + 1, node->right);
-		}
-		else{
-			find_element_by_index(index, start + 1, node->left);
-		}
+	else if (node->left != nullptr){
+		if (start % 2 == 0)
+			find_element_by_index(element, index, start + 1, node->left);
+		else
+			find_element_by_index(element, index, start + 1, node->right);
 	}
-	// need to be fixed
+	else if (node->right != nullptr){
+		if (start % 2 == 0)
+			find_element_by_index(element, index, start + 1, node->right);
+		else
+			find_element_by_index(element, index, start + 1, node->left);
+	}
 }
 #endif // BSTREE_H
