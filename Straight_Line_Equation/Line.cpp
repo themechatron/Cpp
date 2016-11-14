@@ -1,4 +1,5 @@
 #include "Line.h"
+#include "Point.h"
 
 Line::Line(Point _first, Point _second) : first(_first), second(_second) { };
 Line::Line(const Line& other) : first(other.first), second(other.second){ };
