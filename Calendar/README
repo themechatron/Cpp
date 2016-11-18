@@ -1,0 +1,11 @@
+A simple Calendar project. A Calendar object can keep track of one-time events and events that repeat weekly.
+Instead of the DynamicArray implementation we used in class, the Calendar project uses the built-in class vector, which essentially supports the same operations.
+
+Covered topics:
++ memory management
++ operator overloading
++ friend functions
++ const correctness
++ inheritance, method overriding
++ virtual methods / polymorphism
++ virtual destructors
