@@ -1,11 +1,11 @@
 #include "SkipList.h"
 
-
-SkipList::SkipList()
-{
+template<class T>
+SkipList<T>::SkipList(int height = MAX_HEIGHT, Node* head = nullptr) :height(MAX_HEIGHT){
+	//TODO
 }
 
-
-SkipList::~SkipList()
+template<class T>
+SkipList<T>::~SkipList()
 {
 }
