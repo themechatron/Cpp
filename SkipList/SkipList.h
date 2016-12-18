@@ -12,7 +12,9 @@ private:
 	int height;
 	Node* head;
 public:
-	SkipList();
+	SkipList(int, Node*);
+	SkipList(const SkipList<T>&) = delete;
+	SkipList<T>& operator=(const SkipList&) = delete;
 	~SkipList();
 };
 
