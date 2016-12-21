@@ -65,7 +65,7 @@ void SkipList<T>::insert(const T& value){
 	dummy->right = temp;
 
 	//add nodes with the same value in the snop
-	for (int i = 1; i < _level; i++){
+	for (int i = 1; i<_level; i++){
 		//create the next node in the snop
 		Node* hook = temp;
 		temp->up = new Node(temp->data);
@@ -109,7 +109,9 @@ void SkipList<T>::print()const{
 
 template<class T>
 bool SkipList<T>::contains(const T& value){
-	//TODO optimization
+	if (elements == 0){
+		return false;
+	}
 	Node* printerHead = head;
 	Node* printerTail = tail;
 
@@ -119,28 +121,47 @@ bool SkipList<T>::contains(const T& value){
 		printerTail = printerTail->up;
 	}
 
-	//check if the value is contained on this level if not go to lower level if possible
-	for (int i = 0; i < level; i++){
-		Node* print = printerHead;
-		while (print->right != nullptr && print->right != printerTail){
-			if (print->right->data == value){
+	Node* walker = printerHead;
+	while (true){
+		if (walker->right != nullptr && walker->right != printerTail){
+			if (walker->right->data == value){
 				return true;
 			}
-			print = print->right;
+			if (walker->right->data < value){
+				walker = walker->right;
+				continue;
+			}
 		}
-		//we are sure that we can go down because we start from the highest current level and we iterate it to the level 1
-		printerHead = printerHead->down;
-		printerTail = printerTail->down;
+		if (walker->left != nullptr && walker->left != printerHead){
+			if (walker->left->data == value){
+				return true;
+			}
+			if (walker->left->data > value){
+				walker = walker->left;
+				continue;
+			}
+		}
+		if (walker->left != nullptr && walker->left != printerHead && walker->left->data > value){
+
+		}
+		if (walker->down != nullptr){
+			walker = walker->down;
+			printerHead = printerHead->down;
+			printerTail = printerTail->down;
+			continue;
+		}
+		if (walker->down == nullptr){
+			return false;
+		}
 	}
-	return false;
 }
 
 template<class T>
 void SkipList<T>::remove(const T& value){
-	//TODO optimization
 	if (!contains(value)){
 		return;
 	}
+	elements--;
 	Node* printerHead = head;
 	Node* printerTail = tail;
 	for (int i = 1; i < level; i++){
@@ -161,8 +182,6 @@ void SkipList<T>::remove(const T& value){
 					print->down->up = nullptr;
 				}
 				delete print;
-
-				elements--;
 				//break the loop
 				break;
 			}
@@ -235,6 +254,36 @@ void SkipList<T>::copy(Node* _head, Node* _tail, int _level, int _elements){
 		copyTail->left = current;
 		copyOtherHead = copyOtherHead->up;
 		copyOtherTail = copyOtherTail->up;
+		copyHead = copyHead->up;
+		copyTail = copyTail->up;
+	}
+
+	//connect all the up and down nodes together
+	copyHead = head;
+	copyTail = tail;
+	for (int i = 1; i < level; i++){
+		Node* cpy = copyHead;
+		if (i <= 1){
+			while (cpy->right != nullptr && cpy->right != copyTail){
+				cpy = cpy->right;
+			}
+			copyHead = copyHead->up;
+			copyTail = copyTail->up;
+			continue;
+		}
+		Node* headCopy = copyHead->down;
+		Node* tailCopy = copyTail->down;
+		while (cpy->right != nullptr && cpy->right != copyTail){
+			cpy = cpy->right;
+			while (headCopy->right != nullptr && headCopy->right != tailCopy){
+				headCopy = headCopy->right;
+				if (headCopy->data == cpy->data){
+					headCopy->up = cpy;
+					cpy->down = headCopy;
+					break;
+				}
+			}
+		}
 		copyHead = copyHead->up;
 		copyTail = copyTail->up;
 	}
