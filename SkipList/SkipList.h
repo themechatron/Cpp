@@ -5,8 +5,8 @@
 using namespace std;
 
 #define MAX_LEVEL 32
-#define PROB 0.25
-;
+#define PROB 0.5
+
 template<class T>
 class SkipList{
 private:
