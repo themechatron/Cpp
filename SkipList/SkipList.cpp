@@ -109,15 +109,15 @@ void SkipList<T>::remove(const T& value)
 		return;
 	}
 	elements--;
-	Node* printerHead = head;
-	Node* printerTail = tail;
+	Node* removerHead = head;
+	Node* removerTail = tail;
 	for (int i = 1; i < level; i++){
-		printerHead = printerHead->up;
-		printerTail = printerTail->up;
+		removerHead = removerHead->up;
+		removerTail = removerTail->up;
 	}
 	for (int i = 0; i<level; i++){
-		Node* print = printerHead;
-		while (print->right != nullptr && print->right != printerTail){
+		Node* print = removerHead;
+		while (print->right != nullptr && print->right != removerTail){
 			if (print->right->data == value){
 				print = print->right;
 
@@ -134,8 +134,8 @@ void SkipList<T>::remove(const T& value)
 			}
 			print = print->right;
 		}
-		printerHead = printerHead->down;
-		printerTail = printerTail->down;
+		removerHead = removerHead->down;
+		removerTail = removerTail->down;
 	}
 }
 
