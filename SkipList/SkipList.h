@@ -1,8 +1,13 @@
 #include <iostream>
-#include<stdlib.h>
-#include<ctime>
+#include <stdlib.h>
+#include <ctime> 
+#include <vector> //std::vector
+#include <algorithm> //std::find
 
-using namespace std;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::find;
 
 #define MAX_LEVEL 32
 #define PROB 0.5
@@ -28,6 +33,8 @@ public:
 	void print() const;
 	bool contains(const T& value);
 	void remove(const T& value);
+	SkipList<T>& merge(SkipList<T>& other);
+	SkipList<T>& intersect(SkipList<T>& other);
 	~SkipList();
 private:
 	double drand(){
@@ -41,4 +48,5 @@ private:
 	}
 	void copy(Node* _head, Node* _tail, int _level, int _elements);
 	void freeNodes(Node* _head, Node* _tail);
+	void insertPrivate(const T& value, int _level = -1);
 };
