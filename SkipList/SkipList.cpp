@@ -539,8 +539,10 @@ T& SkipList<T>::SkipListIterator::operator*(){
 
 template<class T>
 SkipList<T>::SkipListIterator& SkipList<T>::SkipListIterator::operator++(){
-	operations.pop();
-	unwind();
+	if (!operations.empty()){
+		operations.pop();
+		unwind();
+	}
 	return *this;
 }
 
@@ -557,7 +559,7 @@ bool SkipList<T>::SkipListIterator::operator!=(const SkipList<T>::SkipListIterat
 
 template<class T>
 SkipList<T>::SkipListIterator begin(){
-	return SkipListIterator(head->right);
+	return SkipListIterator(head);
 }
 
 template<class T>
@@ -578,39 +580,27 @@ void SkipList<T>::SkipListIterator::unwind(){
 	Node* topNode = topOperation.second;
 	while (!operations.empty() && topOperation.first != STEP_EXTRACT_ROOT){
 		operations.pop();
-		if (move == MOVE_RIGHT){
-			if (topNode != nullptr){
-				if (topNode->right != nullptr){
-					operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
+		if (topNode != nullptr){
+			if (topNode->right != nullptr){
+				operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
+				if (topNode->right->right != nullptr){
 					operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->right));
 				}
-				if (topNode->right == nullptr){
-					move = MOVE_LEFT;
-					if (topNode->up != nullptr){
-						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->up));
+				else{
+					while (topNode->left != nullptr){
+						topNode = topNode->left;
 					}
-					cout << endl;
+					if (topNode->up != nullptr){
+						cout << endl;
+						topNode = topNode->up;
+						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode));
+					}
 				}
-				topOperation = operations.top();
-				topNode = topOperation.second;
 			}
 		}
-		if (move == MOVE_LEFT){
-			if (topNode != nullptr){
-				if (topNode->left != nullptr){
-					operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->left));
-					operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->left));
-				}
-				if (topNode->left == nullptr){
-					move = MOVE_RIGHT;
-					if (topNode->up != nullptr){
-						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->up));
-					}
-					cout << endl;
-				}
-				topOperation = operations.top();
-				topNode = topOperation.second;
-			}
+		if (!operations.empty()){
+			topOperation = operations.top();
+			topNode = topOperation.second;
 		}
 	}
 }

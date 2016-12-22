@@ -13,9 +13,6 @@ using std::find;
 #define PROB 0.5
 #define STEP_EXTRACT_ROOT 0
 #define STEP_TRAVERSE_SUBTREE 1
-#define MOVE_LEFT 0
-#define MOVE_RIGHT 1
-
 template<class T>
 class SkipList{
 private:
@@ -60,7 +57,6 @@ public:
 	private:
 		void unwind();
 		stack<pendingTraverseStep> operations;
-		int move;
 	public:
 		SkipListIterator(Node* node);
 		T& operator*();
