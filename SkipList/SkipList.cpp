@@ -527,6 +527,7 @@ template<class T>
 SkipList<T>::SkipListIterator::SkipListIterator(Node* node){
 	if (node != nullptr){
 		operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, node));
+		move = MOVE_RIGHT;
 		unwind();
 	}
 }
@@ -561,7 +562,11 @@ SkipList<T>::SkipListIterator begin(){
 
 template<class T>
 SkipList<T>::SkipListIterator end(){
-	return SkipListIterator(tail->left);
+	Node* upTail = tail;
+	while (upTail->up != nullptr){
+		upTail = upTail->up;
+	}
+	return SkipListIterator(upTail->left);
 }
 
 template<class T>
@@ -573,11 +578,39 @@ void SkipList<T>::SkipListIterator::unwind(){
 	Node* topNode = topOperation.second;
 	while (!operations.empty() && topOperation.first != STEP_EXTRACT_ROOT){
 		operations.pop();
-		if (topNode->right != nullptr){
-			operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
+		if (move == MOVE_RIGHT){
+			if (topNode != nullptr){
+				if (topNode->right != nullptr){
+					operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
+					operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->right));
+				}
+				if (topNode->right == nullptr){
+					move = MOVE_LEFT;
+					if (topNode->up != nullptr){
+						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->up));
+					}
+					cout << endl;
+				}
+				topOperation = operations.top();
+				topNode = topOperation.second;
+			}
 		}
-		operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->right));
-		topOperation = operations.top();
-		topNode = topOperation.second;
+		if (move == MOVE_LEFT){
+			if (topNode != nullptr){
+				if (topNode->left != nullptr){
+					operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->left));
+					operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->left));
+				}
+				if (topNode->left == nullptr){
+					move = MOVE_RIGHT;
+					if (topNode->up != nullptr){
+						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->up));
+					}
+					cout << endl;
+				}
+				topOperation = operations.top();
+				topNode = topOperation.second;
+			}
+		}
 	}
 }
