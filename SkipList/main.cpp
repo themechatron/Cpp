@@ -1,7 +1,7 @@
 #include "SkipList.h"
 
 int main(){
-cout << std::boolalpha;
+	cout << std::boolalpha;
 	srand(time(NULL));
 	SkipList<int> zaki;
 	for (int i = -100; i<100; i++){
@@ -85,6 +85,12 @@ cout << std::boolalpha;
 	cout << "==========" << endl;
 	bbb.print();
 	cout << "--------------------" << endl;
+
+	//SkipList<int>::SkipListIterator it = zaki.begin();
+	//for (it = zaki.begin(); it != zaki.end(); ++it){
+	//	cout << "AAA iterator" << endl;
+	//}
+
 	
 	return 0;
 }
