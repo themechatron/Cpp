@@ -87,9 +87,6 @@ bool SkipList<T>::contains(const T& value)
 				continue;
 			}
 		}
-		if (walker->left != nullptr && walker->left != printerHead && walker->left->data > value){
-
-		}
 		if (walker->down != nullptr){
 			walker = walker->down;
 			printerHead = printerHead->down;
@@ -115,6 +112,7 @@ void SkipList<T>::remove(const T& value)
 		removerHead = removerHead->up;
 		removerTail = removerTail->up;
 	}
+	int counterLevel = 1;
 	for (int i = 0; i<level; i++){
 		Node* print = removerHead;
 		while (print->right != nullptr && print->right != removerTail){
@@ -129,6 +127,7 @@ void SkipList<T>::remove(const T& value)
 					print->down->up = nullptr;
 				}
 				delete print;
+				counterLevel++;
 				//break the loop
 				break;
 			}
@@ -136,6 +135,10 @@ void SkipList<T>::remove(const T& value)
 		}
 		removerHead = removerHead->down;
 		removerTail = removerTail->down;
+	}
+	if (level <= counterLevel){
+		//TODO
+		level -= counterLevel - level;
 	}
 }
 
@@ -152,14 +155,13 @@ SkipList<T>& SkipList<T>::merge(SkipList<T>& other)
 		result->copy(other.head, other.tail, other.level, other.elements);
 		temp = *this;
 	}
-	Node* resultHead = result->head;
-	Node* resultTail = result->tail;
+
 	Node* walkerHead = temp.head;
 	Node* walkerTail = temp.tail;
 
 	//find how many times each number is repeated and put it into vector
 	//very complex :( | O(n^3)
-	vector<int> numbers;
+	vector<T> numbers;
 	vector<int> repetitions;
 	while (true){
 		Node* copier = walkerHead;
@@ -177,7 +179,6 @@ SkipList<T>& SkipList<T>::merge(SkipList<T>& other)
 						}
 					}
 				}
-
 			}
 		}
 		if (walkerHead->up != nullptr && walkerTail->up != nullptr){
@@ -203,77 +204,78 @@ template<class T>
 SkipList<T>& SkipList<T>::intersect(SkipList<T>& other)
 {
 	SkipList<T>* result = new SkipList<T>;
+	SkipList<T> temp; // find the bigger SkipList by level
+	if (level >= other.level){
+		result->copy(head, tail, level, elements);
+		temp = other;
+	}
+	else{
+		result->copy(other.head, other.tail, other.level, other.elements);
+		temp = *this;
+	}
 
-	Node* otherHead = other.head;
-	Node* otherTail = other.tail;
+	vector<T> allValues;
+	vector<T> numRepetitions;
+	Node* walkerHead = temp.head;
+	Node* walkerTail = temp.tail;
 
-	vector<int> numbers;
-	vector<int> repetitions;
+	//push all the values from the temp skip list to our vector and find their repetitions so we can actually get the exact number of levels per number in the end
 	while (true){
-		Node* copier = otherHead;
-		while (copier != nullptr && copier->right != nullptr && copier->right != otherTail){
+		Node* copier = walkerHead;
+		while (copier != nullptr && copier->right != nullptr && copier->right != walkerTail){
 			copier = copier->right;
-			if (find(numbers.begin(), numbers.end(), copier->data) == numbers.end()){
-				numbers.push_back(copier->data);
-				repetitions.push_back(1);
-			}
-			else{
-				for (size_t j = 0; j < numbers.size(); ++j){
-					if (numbers[j] == copier->data){
-						repetitions[j]++;
+			if (result->contains(copier->data)){
+				if (find(allValues.begin(), allValues.end(), copier->data) == allValues.end()){
+					allValues.push_back(copier->data);
+					numRepetitions.push_back(1);
+				}
+				else{
+					for (int i = 0; i < allValues.size(); i++){
+						if (allValues[i] == copier->data){
+							numRepetitions[i]++;
+						}
 					}
 				}
 			}
 		}
-		if (otherHead->up != nullptr && otherTail->up != nullptr){
-			otherHead = otherHead->up;
-			otherTail = otherTail->up;
+		if (walkerHead->up != nullptr && walkerTail->up != nullptr){
+			walkerHead = walkerHead->up;
+			walkerTail = walkerTail->up;
 		}
 		else{
 			break;
 		}
 	}
 
-	//check the actual level of our new skip list
-	int lev = 1;
-	for (size_t i = 1; i < numbers.size(); ++i){
-		if (contains(numbers[i]) && other.contains(numbers[i])){
-			lev++;
-		}
-	}
-
-	//create nodes for our skip list
-	for (int i = 1; i <= lev; i++){
-		if (i == result->level){
-			Node* upHead = result->head;
-			Node* upTail = result->tail;
-			while (upHead->up != nullptr && upTail->up != nullptr){
-				upHead = upHead->up;
-				upTail = upTail->up;
+	//go through each element in our result and remove the one that are not in the vector
+	Node* copiRes = result->head;
+	while (copiRes != nullptr && copiRes->right != nullptr && copiRes->right != result->tail){
+		copiRes = copiRes->right;
+		bool check = false;
+		for (int i = 0; i < allValues.size(); i++){
+			if (copiRes->data == allValues[i]){
+				check = true;
+				break;
 			}
-			upHead->up = new Node(); //create new node in the head because the level was increased
-			upTail->up = new Node(); //create new node in the tail because the level was increased
-
-			//connect the created nodes
-			upHead->up->down = upHead;
-			upTail->up->down = upTail;
-			upHead = upHead->up;
-			upTail = upTail->up;
-			upTail->left = upHead;
-			upHead->right = upTail;
-			result->level++; //increase the current level
+		}
+		if (!check){
+			copiRes = copiRes->right;
+			result->remove(copiRes->left->data);
+			copiRes = copiRes->left;
+		}
+		else{
+			for (int i = 0; i < allValues.size(); i++){
+				//if the number of repetitions is not the same in the both skip lists remove then and add the item again with the right repetitions
+				if (numRepetitions[i] != heightNumber(copiRes->data)){
+					copiRes = copiRes->right;
+					result->remove(copiRes->left->data);
+					result->insertPrivate(allValues[i], numRepetitions[i]);
+					copiRes = copiRes->left;
+					break;
+				}
+			}
 		}
 	}
-
-	//the actual intersect
-	//we found the nodes that are contained in the first skip list and the second skip list
-	//now we are going to insert them into our result
-	for (size_t i = 0; i < numbers.size(); ++i){
-		if (contains(numbers[i]) && other.contains(numbers[i])){
-			result->insertPrivate(numbers[i], repetitions[i]); //using the private function insert we insert the element repetitions[i] times
-		}
-	}
-
 	return *result;
 }
 
@@ -449,7 +451,7 @@ void SkipList<T>::insertPrivate(const T& value, int _level = -1)
 	Node* upHead = head;
 	Node* upTail = tail;
 	//add nodes with the same value in the snop
-	for (int i = 1; i < _level; i++){
+	for (int i = 1; i<_level; i++){
 		//create the next node in the snop
 		Node* hook = temp;
 		temp->up = new Node(temp->data);
@@ -494,4 +496,29 @@ void SkipList<T>::insertPrivate(const T& value, int _level = -1)
 			}
 		}
 	}
+}
+
+template<class T>
+int SkipList<T>::heightNumber(const T& value){
+	//get the total repetitions in the whole skiplist of a certain value
+	int result = 0;
+	Node* upHead = head;
+	Node* upTail = tail;
+	while (true){
+		Node* copier = upHead;
+		while (copier != nullptr && copier->right != nullptr && copier->right != upTail){
+			copier = copier->right;
+			if (copier->data == value){
+				result++;
+			}
+		}
+		if (upHead->up != nullptr && upTail->up != nullptr){
+			upHead = upHead->up;
+			upTail = upTail->up;
+		}
+		else{
+			break;
+		}
+	}
+	return result;
 }
