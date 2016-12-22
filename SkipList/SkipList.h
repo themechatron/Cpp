@@ -11,6 +11,8 @@ using std::find;
 
 #define MAX_LEVEL 32
 #define PROB 0.5
+#define STEP_EXTRACT_ROOT 0
+#define STEP_TRAVERSE_SUBTREE 1
 
 template<class T>
 class SkipList{
@@ -36,6 +38,7 @@ public:
 	SkipList<T>& merge(SkipList<T>& other);
 	SkipList<T>& intersect(SkipList<T>& other);
 	~SkipList();
+
 private:
 	double drand(){
 		return rand() / (RAND_MAX + 1.0);
@@ -49,4 +52,18 @@ private:
 	void copy(Node* _head, Node* _tail, int _level, int _elements);
 	void freeNodes(Node* _head, Node* _tail);
 	void insertPrivate(const T& value, int _level = -1);
+
+public:
+	class SkipListIterator{
+	private:
+		void unwind();
+		stack<pendingTraverseStep> operations;
+	public:
+		SkipListIterator(Node* node);
+		T& operator*();
+		SkipListIterator& operator++();
+		bool operator!=(const SkipListIterator& other);
+	};
+	SkipListIterator begin();
+	SkipListIterator end();
 };

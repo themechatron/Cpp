@@ -522,3 +522,62 @@ int SkipList<T>::heightNumber(const T& value){
 	}
 	return result;
 }
+
+template<class T>
+SkipList<T>::SkipListIterator::SkipListIterator(Node* node){
+	if (node != nullptr){
+		operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, node));
+		unwind();
+	}
+}
+
+template<class T>
+T& SkipList<T>::SkipListIterator::operator*(){
+	return operations.top().second->data;
+}
+
+template<class T>
+SkipList<T>::SkipListIterator& SkipList<T>::SkipListIterator::operator++(){
+	operations.pop();
+	unwind();
+	return *this;
+}
+
+template<class T>
+bool SkipList<T>::SkipListIterator::operator!=(const SkipList<T>::SkipListIterator& other){
+	if (operations.empty()){
+		return !(other.operations.empty());
+	}
+	if (other.operations.empty()){
+		return !operations.empty();
+	}
+	return operations.top() != other.operations.top();
+}
+
+template<class T>
+SkipList<T>::SkipListIterator begin(){
+	return SkipListIterator(head->right);
+}
+
+template<class T>
+SkipList<T>::SkipListIterator end(){
+	return SkipListIterator(tail->left);
+}
+
+template<class T>
+void SkipList<T>::SkipListIterator::unwind(){
+	if (operations.empty()){
+		return;
+	}
+	pendingTraverseStep topOperation = operations.top();
+	Node* topNode = topOperation.second;
+	while (!operations.empty() && topOperation.first != STEP_EXTRACT_ROOT){
+		operations.pop();
+		if (topNode->right != nullptr){
+			operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
+		}
+		operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->right));
+		topOperation = operations.top();
+		topNode = topOperation.second;
+	}
+}
