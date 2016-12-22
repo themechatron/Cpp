@@ -86,10 +86,10 @@ int main(){
 	bbb.print();
 	cout << "--------------------" << endl;
 
-	//SkipList<int>::SkipListIterator it = zaki.begin();
-	//for (it = zaki.begin(); it != zaki.end(); ++it){
-	//	cout << "AAA iterator" << endl;
-	//}
+	SkipList<int>::SkipListIterator it = zaki.begin();
+	for (it = zaki.begin(); it != zaki.end(); ++it){
+		cout << "AAA iterator" << endl;
+	}
 
 	
 	return 0;

@@ -52,7 +52,7 @@ private:
 	void copy(Node* _head, Node* _tail, int _level, int _elements);
 	void freeNodes(Node* _head, Node* _tail);
 	void insertPrivate(const T& value, int _level = -1);
-
+	using pendingTraverseStep = pair<int, Node*>;
 public:
 	class SkipListIterator{
 	private:
