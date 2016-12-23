@@ -106,7 +106,7 @@ void FamilyTree::oldestRelativePrivate(Person* r, Person*& oldest){
 	if (r == nullptr){
 		return;
 	}
-	if (r->birthYear < oldest->birthYear){
+	if (r->birthYear < oldest->birthYear && r->deathYear == -1){
 		oldest = r;
 	}
 	if (r->birthYear == oldest->birthYear){
