@@ -527,7 +527,6 @@ template<class T>
 SkipList<T>::SkipListIterator::SkipListIterator(Node* node){
 	if (node != nullptr){
 		operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, node));
-		move = MOVE_RIGHT;
 		unwind();
 	}
 }
@@ -564,11 +563,7 @@ SkipList<T>::SkipListIterator begin(){
 
 template<class T>
 SkipList<T>::SkipListIterator end(){
-	Node* upTail = tail;
-	while (upTail->up != nullptr){
-		upTail = upTail->up;
-	}
-	return SkipListIterator(upTail->left);
+	return SkipListIterator(tail->left);
 }
 
 template<class T>
@@ -585,16 +580,6 @@ void SkipList<T>::SkipListIterator::unwind(){
 				operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode->right));
 				if (topNode->right->right != nullptr){
 					operations.push(pendingTraverseStep(STEP_EXTRACT_ROOT, topNode->right));
-				}
-				else{
-					while (topNode->left != nullptr){
-						topNode = topNode->left;
-					}
-					if (topNode->up != nullptr){
-						cout << endl;
-						topNode = topNode->up;
-						operations.push(pendingTraverseStep(STEP_TRAVERSE_SUBTREE, topNode));
-					}
 				}
 			}
 		}
