@@ -224,5 +224,5 @@ void FamilyTree::deletePerson(Person* r){
 }
 
 void FamilyTree::copy(Person*& r, Person* o){
-	r = o;
+	r = new Person(o->egn, o->name, o->sex, o->birthYear, o->deathYear, o->mother, o->father, o->child);
 }
