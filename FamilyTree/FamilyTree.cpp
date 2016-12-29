@@ -217,7 +217,6 @@ void FamilyTree::deletePerson(Person* r){
 	if (r == nullptr){
 		return;
 	}
-	cout << r << endl;
 	deletePerson(r->father);
 	deletePerson(r->mother);
 	delete r;
