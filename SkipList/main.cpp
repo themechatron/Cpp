@@ -88,8 +88,9 @@ int main(){
 
 	SkipList<int>::SkipListIterator it = zaki.begin();
 	for (it = zaki.begin(); it != zaki.end(); ++it){
-		cout << "AAA iterator" << endl;
+		cout << *it << " ";
 	}
+
 
 	
 	return 0;
