@@ -78,28 +78,28 @@ map<string, unsigned int> FamilyTree::commonNames() const{
 	return hashTable;
 }
 
-void FamilyTree::recordParentsPrivate(string e, Person* f, Person* m, Person* c){
-	if (c == nullptr){
+void FamilyTree::recordParentsPrivate(string egn, Person* father, Person* mother, Person* child){
+	if (child == nullptr){
 		return;
 	}
-	if (c->egn == e){
-		if (c->mother != nullptr && c->father != nullptr){
+	if (child->egn == egn){
+		if (child->mother != nullptr && child->father != nullptr){
 			cout << "The person already have mother and father!" << endl;
 			return;
 		}
-		if (c == f || c == m || c->child == f || c->child == m){
+		if (child == father || child == mother || child->child == father || child->child == mother){
 			cout << "I don't think this is biologically possible!" << endl;
 			return;
 		}
 		else{
-			c->mother = m;
-			c->father = f;
-			m->child = c;
-			f->child = c;
+			child->mother = mother;
+			child->father = father;
+			mother->child = child;
+			father->child = child;
 		}
 	}
-	recordParentsPrivate(e, f, m, c->father);
-	recordParentsPrivate(e, f, m, c->mother);
+	recordParentsPrivate(egn, father, mother, child->father);
+	recordParentsPrivate(egn, father, mother, child->mother);
 }
 
 void FamilyTree::oldestRelativePrivate(Person* r, Person*& oldest){
