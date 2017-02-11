@@ -78,6 +78,10 @@ size_t HashMap<Key, Value>::size() const
 template <class Key, class Value>
 Value& HashMap<Key, Value>::operator[](const Key& key)
 {
+	if(m_size >= m_maxRows * 75 / 100)
+	{
+		resize();
+	}
 	size_t idx = hashFunction(key);
 	for(auto &i : m_table[idx])
 	{
