@@ -13,7 +13,7 @@ void insertionSort(ArrayType* arr, int left, int right)
 			arr[j+1] = arr[j];
 			j--;
 		}
-		arr[j] = key;
+		arr[j + 1] = key;
 	}
 }
 
